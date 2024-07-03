@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MK Simple Scroll Progress
- * Plugin URI: https://mamikonars.github.io/personal/
+ * Plugin URI: https://github.com/marstamyan/mk-simple-scroll-progress
  * Description: A simple scroll progress indicator plugin.
  * Version: 1.0.0
  * Author: Mamikon
