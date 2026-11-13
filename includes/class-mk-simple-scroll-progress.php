@@ -1,8 +1,10 @@
 <?php
 
-class MK_Simple_Scroll_Progress {
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-	protected $loader;
+class MK_Simple_Scroll_Progress {
 
 	public function __construct() {
 		$this->load_dependencies();
@@ -11,6 +13,7 @@ class MK_Simple_Scroll_Progress {
 	}
 
 	private function load_dependencies() {
+		require_once MK_SIMPLE_SCROLL_PROGRESS_PATH . 'includes/class-mk-simple-scroll-progress-settings.php';
 		require_once MK_SIMPLE_SCROLL_PROGRESS_PATH . 'includes/class-mk-simple-scroll-progress-admin.php';
 		require_once MK_SIMPLE_SCROLL_PROGRESS_PATH . 'includes/class-mk-simple-scroll-progress-public.php';
 	}

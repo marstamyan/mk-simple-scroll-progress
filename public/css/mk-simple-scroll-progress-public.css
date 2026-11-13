@@ -1,0 +1,32 @@
+#mk-scroll-progress-indicator {
+    position: fixed;
+    left: 0;
+    width: 0;
+    z-index: 99998;
+    pointer-events: none;
+}
+
+#mk-scroll-progress-indicator.mk-scroll-progress-top {
+    top: 0;
+}
+
+#mk-scroll-progress-indicator.mk-scroll-progress-bottom {
+    bottom: 0;
+}
+
+.admin-bar #mk-scroll-progress-indicator.mk-scroll-progress-top {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    .admin-bar #mk-scroll-progress-indicator.mk-scroll-progress-top {
+        top: 46px;
+    }
+}
+
+/* On narrow screens WordPress's toolbar scrolls with the document. */
+@media screen and (max-width: 600px) {
+    .admin-bar #mk-scroll-progress-indicator.mk-scroll-progress-top {
+        top: 0;
+    }
+}

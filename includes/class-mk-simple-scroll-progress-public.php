@@ -1,30 +1,51 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class MK_Simple_Scroll_Progress_Public {
 
-	public function __construct() {
-		$this->plugin_name = 'mk-simple-scroll-progress';
-		$this->version = '1.0.0';
+	private function should_display() {
+		if ( is_admin() || is_feed() || is_embed() ) {
+			return false;
+		}
+
+		$options = MK_Simple_Scroll_Progress_Settings::get();
+		$excluded_pages = array_map( 'intval', explode( ',', $options['excluded_pages'] ) );
+		// The last post in a secondary Loop is not necessarily the requested page.
+		$page_id = ( is_singular() || is_home() ) ? (int) get_queried_object_id() : 0;
+
+		return 0 === $page_id || ! in_array( $page_id, $excluded_pages, true );
 	}
 
 	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . '../public/js/mk-simple-scroll-progress-public.js', array(), $this->version, true );
-	}
-
-	public function add_scroll_progress_indicator() {
-		$options = get_option( 'mk_simple_scroll_progress_settings' );
-		$excluded_pages = isset( $options['excluded_pages'] ) ? explode( ',', $options['excluded_pages'] ) : array();
-
-		if ( in_array( get_the_ID(), $excluded_pages ) ) {
+		if ( ! $this->should_display() ) {
 			return;
 		}
 
-		$position = isset( $options['position'] ) ? $options['position'] : 'top';
-		$background_color = isset( $options['background_color'] ) ? $options['background_color'] : '#0170B9';
-		$background_opacity = isset( $options['background_opacity'] ) ? $options['background_opacity'] : '1';
-		$height = isset( $options['height'] ) ? $options['height'] : '4';
-		$border_radius = isset( $options['border_radius'] ) ? $options['border_radius'] : '0';
+		wp_enqueue_style( 'mk-simple-scroll-progress', MK_SIMPLE_SCROLL_PROGRESS_URL . 'public/css/mk-simple-scroll-progress-public.css', array(), MK_SIMPLE_SCROLL_PROGRESS_VERSION );
+		wp_enqueue_script( 'mk-simple-scroll-progress', MK_SIMPLE_SCROLL_PROGRESS_URL . 'public/js/mk-simple-scroll-progress-public.js', array(), MK_SIMPLE_SCROLL_PROGRESS_VERSION, true );
+	}
 
-		echo '<div id="mk-scroll-progress-indicator" style="position:fixed; left:0; width:0; height:' . esc_attr( $height ) . 'px; background-color:' . esc_attr( $background_color ) . '; opacity:' . esc_attr( $background_opacity ) . '; border-radius:' . esc_attr( $border_radius ) . 'px; z-index:99999; ' . ( $position == 'top' ? 'top:0;' : 'bottom:0;' ) . '"></div>';
+	public function add_scroll_progress_indicator() {
+		if ( ! $this->should_display() ) {
+			return;
+		}
+
+		$options = MK_Simple_Scroll_Progress_Settings::get();
+		$style = sprintf(
+			'height:%dpx;background-color:%s;opacity:%s;border-radius:%dpx;',
+			$options['height'],
+			$options['background_color'],
+			(string) $options['background_opacity'],
+			$options['border_radius']
+		);
+
+		printf(
+			'<div id="mk-scroll-progress-indicator" class="mk-scroll-progress-%s" style="%s" aria-hidden="true"></div>',
+			esc_attr( $options['position'] ),
+			esc_attr( $style )
+		);
 	}
 }
